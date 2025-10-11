@@ -1,5 +1,4 @@
-import 'package:dio/dio.dart';
-import 'package:dropify/custom_drop_down/dropinity.dart';
+import 'package:dropinity/custom_drop_down/dropinity.dart';
 import 'package:flutter/material.dart';
 import 'package:pagify/helpers/data_and_pagination_data.dart';
 import 'package:pagify/helpers/errors.dart';
@@ -88,20 +87,7 @@ class _DropinityExampleState extends State<DropinityExample> {
                 ),
                 errorMapper: PagifyErrorMapper(
                     errorWhenDio: (e) {
-                      String? msg = '';
-                      switch (e.type) {
-                        case DioExceptionType.connectionTimeout:
-                          msg = 'Connection timeout. Please try again.';
-
-                        case DioExceptionType.receiveTimeout:
-                          msg = 'Server response timeout.';
-
-                        case DioExceptionType.badResponse:
-                          msg = 'Server returned ${e.response?.statusCode}';
-
-                        default:
-                          msg = e.response?.data.toString();
-                      }
+                      String? msg = e.type.name;
 
                       return PagifyApiRequestException(
                         msg ?? 'network error occur',

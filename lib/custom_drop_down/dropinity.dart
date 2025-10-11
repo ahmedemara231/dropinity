@@ -1,5 +1,5 @@
-import 'package:dropify/custom_drop_down/extensions/object.dart';
-import 'package:dropify/custom_drop_down/extensions/padding_extension.dart';
+import 'package:dropinity/custom_drop_down/extensions/object.dart';
+import 'package:dropinity/custom_drop_down/extensions/padding_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:pagify/helpers/data_and_pagination_data.dart';
 import 'package:pagify/helpers/errors.dart';
