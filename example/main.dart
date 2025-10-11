@@ -90,7 +90,7 @@ class _DropinityExampleState extends State<DropinityExample> {
                       String? msg = e.type.name;
 
                       return PagifyApiRequestException(
-                        msg ?? 'network error occur',
+                        msg,
                         pagifyFailure: RequestFailureData(
                           statusCode: e.response?.statusCode,
                           statusMsg: e.response?.statusMessage,
