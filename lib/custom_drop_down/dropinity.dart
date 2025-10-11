@@ -141,7 +141,7 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                   builder: (context, val, child) => Row(
                     children: [
                       if(_selectedValue.isNull)
-                        widget.buttonData.hint?? const DropifyText('select item', color: Colors.grey)
+                        widget.buttonData.hint?? const _DropifyText('select item', color: Colors.grey)
                       else
                         widget.buttonData.selectedItemWidget(_selectedValue),
 
@@ -172,7 +172,7 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                   child: Column(
                     spacing: 7,
                     children: [
-                      DefaultTextField(
+                      _DefaultTextField(
                           title: widget.textFieldData.title,
                           prefixIcon: widget.textFieldData.prefixIcon,
                           suffixIcon: widget.textFieldData.suffixIcon,

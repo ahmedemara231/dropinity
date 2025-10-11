@@ -1,7 +1,7 @@
 part of '../custom_drop_down/dropinity.dart';
 
 enum TitleStatus {withTitle, withoutTitle}
-class DefaultTextField extends StatefulWidget {
+class _DefaultTextField extends StatefulWidget {
   final double? borderRadius;
   final TitleStatus withTitle;
   final String? title;
@@ -35,7 +35,7 @@ class DefaultTextField extends StatefulWidget {
   final TextStyle? style;
   final String? upperTitle;
 
-  const DefaultTextField({
+  const _DefaultTextField({
     super.key,
     this.title,
     this.borderRadius,
@@ -69,7 +69,7 @@ class DefaultTextField extends StatefulWidget {
     this.style,
   }) : upperTitle = null, withTitle = TitleStatus.withoutTitle;
 
-  const DefaultTextField.withTitle({
+  const _DefaultTextField.withTitle({
     super.key,
     this.title,
     this.borderRadius,
@@ -105,10 +105,10 @@ class DefaultTextField extends StatefulWidget {
   }) : withTitle = TitleStatus.withTitle;
 
   @override
-  State<DefaultTextField> createState() => _DefaultTextFieldState();
+  State<_DefaultTextField> createState() => _DefaultTextFieldState();
 }
 
-class _DefaultTextFieldState extends State<DefaultTextField> {
+class _DefaultTextFieldState extends State<_DefaultTextField> {
   late bool _isSecure;
 
   @override
@@ -135,7 +135,7 @@ class _DefaultTextFieldState extends State<DefaultTextField> {
       spacing: 5,
       children: [
         if(widget.withTitle == TitleStatus.withTitle)
-          DropifyText(widget.upperTitle!, fontWeight: FontWeight.bold, fontSize: 11),
+          _DropifyText(widget.upperTitle!, fontWeight: FontWeight.bold, fontSize: 11),
 
         TextFormField(
           autovalidateMode: AutovalidateMode.onUserInteraction,

@@ -1,6 +1,6 @@
 part of '../custom_drop_down/dropinity.dart';
 
-class DropifyText extends StatelessWidget {
+class _DropifyText extends StatelessWidget {
   final bool withIcon;
   final String text;
   final Color? color;
@@ -10,7 +10,7 @@ class DropifyText extends StatelessWidget {
   final TextOverflow? overflow;
   final int? maxLines;
   final double? height;
-  const DropifyText(
+  const _DropifyText(
       this.text, {
         super.key, this.icon,
         this.color, this.withIcon = false,
@@ -23,7 +23,7 @@ class DropifyText extends StatelessWidget {
       });
 
   final Widget? icon;
-  const DropifyText.withIcon({
+  const _DropifyText.withIcon({
     super.key,
     required this.icon,
     required this.text,
