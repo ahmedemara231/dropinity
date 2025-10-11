@@ -643,3 +643,4 @@ For questions about the Pagify package, refer to the [Pagify documentation](http
 ---
 
 **Made with ❤️ for the Flutter community by Ahmed Emara**
+[linkedIn](https://www.linkedin.com/in/ahmed-emara-11550526a/)
