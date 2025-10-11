@@ -1,4 +1,4 @@
-# Dropify
+# dropinity
 
 A powerful and highly customizable Flutter dropdown widget with built-in search functionality and pagination support. Dropify makes it easy to handle both local and remote data sources with a beautiful, animated interface.
 

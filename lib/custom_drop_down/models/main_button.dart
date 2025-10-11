@@ -1,4 +1,4 @@
-part of '../dropify.dart';
+part of '../dropinity.dart';
 
 class ButtonData<Model>{
   final double buttonHeight;

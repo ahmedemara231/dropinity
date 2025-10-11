@@ -1,4 +1,4 @@
-part of '../custom_drop_down/dropify.dart';
+part of '../custom_drop_down/dropinity.dart';
 
 class DropifyText extends StatelessWidget {
   final bool withIcon;

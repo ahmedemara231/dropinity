@@ -1,4 +1,4 @@
-part of '../dropify.dart';
+part of '../dropinity.dart';
 
 class TextFieldData<Model>{
   final String? title;

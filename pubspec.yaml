@@ -1,7 +1,14 @@
-name: dropify
+name: dropinity
 description: "a powerful and customizable paginated dropdown widget for Flutter"
 version: 0.0.1
-homepage:
+homepage: https://github.com/ahmedemara231/dropinity
+
+topics:
+  - dropdown
+  - pagination
+  - lazyloading
+  - network
+  - api
 
 environment:
   sdk: ^3.9.0
@@ -17,13 +24,10 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter packages.
 flutter:
 
-  # To add assets to your package, add an assets section, like this:
+# To add assets to your package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
-import 'package:dropify/custom_drop_down/dropify.dart';
+import 'package:dropify/custom_drop_down/dropinity.dart';
 import 'package:flutter/material.dart';
 import 'package:pagify/helpers/data_and_pagination_data.dart';
 import 'package:pagify/helpers/errors.dart';
 import 'package:pagify/pagify.dart';
 
 void main() {
-  runApp(const DropifyExample());
+  runApp(const DropinityExample());
 }
 
 class ExampleModel{
@@ -20,15 +20,15 @@ class ExampleModel{
 }
 
 
-class DropifyExample extends StatefulWidget {
+class DropinityExample extends StatefulWidget {
 
-  const DropifyExample({super.key});
+  const DropinityExample({super.key});
 
   @override
-  State<DropifyExample> createState() => _DropifyExampleState();
+  State<DropinityExample> createState() => _DropinityExampleState();
 }
 
-class _DropifyExampleState extends State<DropifyExample> {
+class _DropinityExampleState extends State<DropinityExample> {
   Future<ExampleModel> _fetchData(int currentPage) async {
     await Future.delayed(const Duration(seconds: 2)); // simulate api call with current page
     final items = List.generate(25, (index) => 'Item $index');
@@ -57,7 +57,7 @@ class _DropifyExampleState extends State<DropifyExample> {
           spacing: 50,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Dropify<ExampleModel, String>(
+            Dropinity<ExampleModel, String>(
               listHeight: 250,
               buttonData: ButtonData(selectedItemWidget: (e) => Text(e??'')),
               textFieldData: TextFieldData(
@@ -68,7 +68,7 @@ class _DropifyExampleState extends State<DropifyExample> {
               onChanged: (String val) {},
             ),
 
-            Dropify<ExampleModel, String>.withApiRequest(
+            Dropinity<ExampleModel, String>.withApiRequest(
               listHeight: 250,
               buttonData: ButtonData(
                 selectedItemWidget: (e) => Text(e??''),

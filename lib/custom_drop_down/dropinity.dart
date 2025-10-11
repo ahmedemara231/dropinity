@@ -17,7 +17,7 @@ part '../widgets/text.dart';
 part 'type_enum.dart';
 
 
-class Dropify<FullResponse, Model> extends StatefulWidget {
+class Dropinity<FullResponse, Model> extends StatefulWidget {
   final double? listHeight;
   final Curve curve;
   final Color listBackgroundColor;
@@ -34,7 +34,7 @@ class Dropify<FullResponse, Model> extends StatefulWidget {
   final List<Model>? values;
   final ValuesData<Model>? valuesData;
 
-  const Dropify.withApiRequest({
+  const Dropinity.withApiRequest({
     super.key,
     this.curve = Curves.linear,
     this.listBackgroundColor = Colors.white,
@@ -48,7 +48,7 @@ class Dropify<FullResponse, Model> extends StatefulWidget {
         valuesData = null,
         _dropdownType = _DropdownType.withRequest;
 
-  const Dropify({
+  const Dropinity({
     super.key,
     this.curve = Curves.linear,
     this.listBackgroundColor = Colors.white,
@@ -63,10 +63,10 @@ class Dropify<FullResponse, Model> extends StatefulWidget {
         _dropdownType = _DropdownType.none;
 
   @override
-  State<Dropify<FullResponse, Model>> createState() => _DropifyState<FullResponse, Model>();
+  State<Dropinity<FullResponse, Model>> createState() => _DropinityState<FullResponse, Model>();
 }
 
-class _DropifyState<FullResponse, Model> extends State<Dropify<FullResponse, Model>> {
+class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse, Model>> {
   Model? _selectedValue;
 
   void _selectNewElement(Model element){

@@ -1,6 +1,6 @@
 // import 'package:flutter_test/flutter_test.dart';
 //
-// import 'package:dropify/dropify.dart';
+// import 'package:dropify/dropinity.dart';
 //
 // void main() {
 //   test('adds one to input values', () {
