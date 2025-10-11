@@ -1,6 +1,6 @@
 # dropinity
 
-A powerful and highly customizable Flutter dropdown widget with built-in search functionality and pagination support. Dropify makes it easy to handle both local and remote data sources with a beautiful, animated interface.
+A powerful and highly customizable Flutter dropdown widget with built-in search functionality and pagination support. Dropinity makes it easy to handle both local and remote data sources with a beautiful, animated interface.
 
 ## Features
 
@@ -13,7 +13,7 @@ A powerful and highly customizable Flutter dropdown widget with built-in search 
 
 ## Dependencies
 
-Dropify depends on the [Pagify](https://pub.dev/packages/pagify) package for pagination functionality.
+Dropinity depends on the [Pagify](https://pub.dev/packages/pagify) package for pagination functionality.
 
 ## Installation
 
@@ -21,7 +21,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  dropify: ^0.0.1
+  dropinity: ^0.0.1
 ```
 
 Then run:
@@ -31,16 +31,16 @@ flutter pub get
 
 ## Usage
 
-Dropify has two modes of operation:
+Dropinity has two modes of operation:
 
 ### 1. Local Mode (Static Data)
 
 Perfect for predefined lists or data that doesn't require API calls.
 
 ```dart
-typedef DropifyLocal<Model> = Dropify<void, Model>;
+typedef DropinityLocal<Model> = Dropinity<void, Model>;
 
-DropifyLocal<Model>(
+DropinityLocal<Model>(
   dropdownTitle: Text(
     'Select Country',
     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
