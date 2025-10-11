@@ -14,11 +14,14 @@ part 'models/text_field.dart';
 part 'models/values_data.dart';
 part '../widgets/text_field.dart';
 part '../widgets/text.dart';
+part 'type_enum.dart';
 
 
-enum _DropdownType{withRequest, none}
 class Dropify<FullResponse, Model> extends StatefulWidget {
   final double? listHeight;
+  final Curve curve;
+  final Color listBackgroundColor;
+
   final FutureOr<void> Function(Model val) onChanged;
   final Widget? dropdownTitle;
 
@@ -33,6 +36,8 @@ class Dropify<FullResponse, Model> extends StatefulWidget {
 
   const Dropify.withApiRequest({
     super.key,
+    this.curve = Curves.linear,
+    this.listBackgroundColor = Colors.white,
     this.dropdownTitle,
     this.listHeight,
     required this.buttonData,
@@ -45,6 +50,8 @@ class Dropify<FullResponse, Model> extends StatefulWidget {
 
   const Dropify({
     super.key,
+    this.curve = Curves.linear,
+    this.listBackgroundColor = Colors.white,
     this.dropdownTitle,
     this.listHeight,
     required this.buttonData,
@@ -73,13 +80,13 @@ class _DropifyState<FullResponse, Model> extends State<Dropify<FullResponse, Mod
   late ValueNotifier<List<Model>> _localValues;
 
   void _init(){
-    if(widget._dropdownType == _DropdownType.none){
+    if(!widget._dropdownType.withApi){
       _fullValuesData = List.from(widget.values!);
       _localValues = ValueNotifier(List.from(widget.values!));
     }
   }
 
-  void _executeSearchLogic(String pattern) {
+  void _executeSearchLogicToLocalData(String pattern) {
     if(pattern.isEmpty){
       _localValues.value = List.from(_fullValuesData);
 
@@ -160,8 +167,8 @@ class _DropifyState<FullResponse, Model> extends State<Dropify<FullResponse, Mod
                 maintainState: true,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 250),
-                  curve: Curves.easeInOut,
-                  color: Colors.white,
+                  curve: widget.curve,
+                  color: widget.listBackgroundColor,
                   child: Column(
                     spacing: 7,
                     children: [
@@ -177,8 +184,8 @@ class _DropifyState<FullResponse, Model> extends State<Dropify<FullResponse, Mod
                           maxLength: widget.textFieldData.maxLength,
                           style: widget.textFieldData.style,
                           onChanged: (v) {
-                            if(widget._dropdownType == _DropdownType.none){
-                              _executeSearchLogic(v ?? '');
+                            if(!widget._dropdownType.withApi){
+                              _executeSearchLogicToLocalData(v ?? '');
                               return;
                             }
 
@@ -192,10 +199,9 @@ class _DropifyState<FullResponse, Model> extends State<Dropify<FullResponse, Mod
                             );
                           }
                       ),
-
                       SizedBox(
                         height: widget.listHeight?? 250,
-                        child: widget._dropdownType == _DropdownType.none?
+                        child: !widget._dropdownType.withApi?
                         ValueListenableBuilder(
                           valueListenable: _localValues,
                           builder: (context, val, child) => ListView(
