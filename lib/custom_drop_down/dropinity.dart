@@ -141,7 +141,7 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
 
     }else{
       return widget.buttonData.hint??
-          const _DropifyText('select item', color: Colors.grey, maxLines: 2, overflow: TextOverflow.ellipsis);
+          const _DropifyText('select item', color: Colors.grey, maxLines: 2, overflow: TextOverflow.ellipsis, fontWeight: FontWeight.w500, fontSize: 12,);
     }
   }
 
