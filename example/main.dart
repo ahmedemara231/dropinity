@@ -57,6 +57,7 @@ class _DropinityExampleState extends State<DropinityExample> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Dropinity<ExampleModel, String>(
+              controller: DropinityController(),
               listHeight: 250,
               buttonData: ButtonData(selectedItemWidget: (e) => Text(e??'')),
               textFieldData: TextFieldData(
@@ -68,6 +69,7 @@ class _DropinityExampleState extends State<DropinityExample> {
             ),
 
             Dropinity<ExampleModel, String>.withApiRequest(
+              controller: DropinityController(),
               listHeight: 250,
               buttonData: ButtonData(
                 selectedItemWidget: (e) => Text(e??''),

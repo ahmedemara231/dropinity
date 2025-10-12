@@ -1,4 +1,4 @@
-part of '../dropinity.dart';
+part of '../../custom_drop_down/dropinity.dart';
 
 
 /// main class to [Pagify] data

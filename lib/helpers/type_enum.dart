@@ -1,4 +1,4 @@
-part of '../custom_drop_down/dropinity.dart';
+part of '../../custom_drop_down/dropinity.dart';
 
 /// type of the dropdown [DropdownType]
 enum DropdownType{

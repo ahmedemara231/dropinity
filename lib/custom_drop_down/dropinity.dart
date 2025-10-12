@@ -1,5 +1,5 @@
-import 'package:dropinity/custom_drop_down/extensions/object.dart';
-import 'package:dropinity/custom_drop_down/extensions/padding_extension.dart';
+import 'package:dropinity/helpers/extensions/object.dart';
+import 'package:dropinity/helpers/extensions/padding_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:pagify/helpers/data_and_pagination_data.dart';
 import 'package:pagify/helpers/errors.dart';
@@ -8,17 +8,22 @@ import 'dart:async';
 import 'package:pagify/pagify.dart';
 import 'package:flutter/services.dart';
 
-part 'models/main_button.dart';
-part 'models/pagify_list.dart';
-part 'models/text_field.dart';
-part 'models/values_data.dart';
+part '../helpers/models/main_button.dart';
+part '../helpers/models/pagify_list.dart';
+part '../helpers/models/text_field.dart';
+part '../helpers/models/values_data.dart';
 part '../widgets/text_field.dart';
 part '../widgets/text.dart';
-part 'type_enum.dart';
+part '../helpers/type_enum.dart';
+part '../helpers/controller/controller.dart';
 
 
 /// main [Dropinity] class
 class Dropinity<FullResponse, Model> extends StatefulWidget {
+
+  /// controller of the dropdown [DropinityController]
+  final DropinityController controller;
+
   /// height of the list result [double]
   final double? listHeight;
 
@@ -58,6 +63,7 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
     this.listBackgroundColor = Colors.white,
     this.dropdownTitle,
     this.listHeight,
+    required this.controller,
     required this.buttonData,
     required this.textFieldData,
     required this.pagifyData,
@@ -73,6 +79,7 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
     this.listBackgroundColor = Colors.white,
     this.dropdownTitle,
     this.listHeight,
+    required this.controller,
     required this.buttonData,
     required this.textFieldData,
     required this.values,
@@ -122,9 +129,14 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
 
   final ValueNotifier<bool> _isInitialized = ValueNotifier(false);
 
+  void _initController(){
+    widget.controller._init(this);
+  }
+
   @override
   void initState() {
     _init();
+    _initController();
     super.initState();
   }
 
