@@ -15,7 +15,7 @@ A customizable Flutter dropdown widget with search functionality and pagination 
 
 ```yaml
 dependencies:
-  dropinity: ^0.0.1
+  dropinity: ^0.0.2
 ```
 
 ## Quick Start
