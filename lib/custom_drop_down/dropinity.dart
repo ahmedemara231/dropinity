@@ -44,7 +44,7 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
   final ButtonData<Model> buttonData;
 
   /// text field data [TextFieldData]
-  final TextFieldData<Model> textFieldData;
+  final TextFieldData<Model>? textFieldData;
 
   /// custom pagify data [DropinityPagifyData] comes from [Pagify] package
   final DropinityPagifyData<FullResponse, Model>? pagifyData;
@@ -62,10 +62,10 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
     this.curve = Curves.linear,
     this.listBackgroundColor = Colors.white,
     this.dropdownTitle,
+    this.textFieldData,
     this.listHeight,
     required this.controller,
     required this.buttonData,
-    required this.textFieldData,
     required this.pagifyData,
     required this.onChanged
   }) : values = null,
@@ -78,10 +78,10 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
     this.curve = Curves.linear,
     this.listBackgroundColor = Colors.white,
     this.dropdownTitle,
+    this.textFieldData,
     this.listHeight,
     required this.controller,
     required this.buttonData,
-    required this.textFieldData,
     required this.values,
     required this.valuesData,
     required this.onChanged
@@ -118,7 +118,7 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
 
     }else{
       _localValues.value = _fullValuesData.where(
-              (e) => widget.textFieldData.onSearch.call(pattern, e)
+              (e) => widget.textFieldData!.onSearch.call(pattern, e)
       ).toList();
     }
   }
@@ -131,6 +131,15 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
 
   void _initController(){
     widget.controller._init(this);
+  }
+
+  Widget get _selectButtonText{
+    if(widget.buttonData.isNotNull){
+      return widget.buttonData.initialValue?? const _DropifyText('select item', color: Colors.grey, maxLines: 2, overflow: TextOverflow.ellipsis);
+
+    }else{
+      return widget.buttonData.hint?? const _DropifyText('select item', color: Colors.grey, maxLines: 2, overflow: TextOverflow.ellipsis);
+    }
   }
 
   @override
@@ -172,7 +181,7 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                   builder: (context, val, child) => Row(
                     children: [
                       if(_selectedValue.isNull)
-                        widget.buttonData.hint?? const _DropifyText('select item', color: Colors.grey, maxLines: 2, overflow: TextOverflow.ellipsis)
+                        _selectButtonText
                       else
                         widget.buttonData.selectedItemWidget(_selectedValue),
 
@@ -203,33 +212,34 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                   child: Column(
                     spacing: 7,
                     children: [
-                      _DefaultTextField(
-                          title: widget.textFieldData.title,
-                          prefixIcon: widget.textFieldData.prefixIcon,
-                          suffixIcon: widget.textFieldData.suffixIcon,
-                          borderRadius: widget.textFieldData.borderRadius,
-                          borderColor: widget.textFieldData.borderColor,
-                          contentPadding: widget.textFieldData.contentPadding,
-                          controller: widget.textFieldData.controller,
-                          fillColor: widget.textFieldData.fillColor,
-                          maxLength: widget.textFieldData.maxLength,
-                          style: widget.textFieldData.style,
-                          onChanged: (v) {
-                            if(!widget._dropdownType.withApi){
-                              _executeSearchLogicToLocalData(v ?? '');
-                              return;
-                            }
+                      if(widget.textFieldData.isNotNull)
+                        _DefaultTextField(
+                            title: widget.textFieldData!.title,
+                            prefixIcon: widget.textFieldData!.prefixIcon,
+                            suffixIcon: widget.textFieldData!.suffixIcon,
+                            borderRadius: widget.textFieldData!.borderRadius,
+                            borderColor: widget.textFieldData!.borderColor,
+                            contentPadding: widget.textFieldData!.contentPadding,
+                            controller: widget.textFieldData!.controller,
+                            fillColor: widget.textFieldData!.fillColor,
+                            maxLength: widget.textFieldData!.maxLength,
+                            style: widget.textFieldData!.style,
+                            onChanged: (v) {
+                              if(!widget._dropdownType.withApi){
+                                _executeSearchLogicToLocalData(v ?? '');
+                                return;
+                              }
 
-                            if(v.isNull || v!.isEmpty){
-                              widget.pagifyData!.controller.assignToFullData();
-                              return;
-                            }
+                              if(v.isNull || v!.isEmpty){
+                                widget.pagifyData!.controller.assignToFullData();
+                                return;
+                              }
 
-                            widget.pagifyData!.controller.filterAndUpdate(
-                                    (e) => widget.textFieldData.onSearch.call(v, e)
-                            );
-                          }
-                      ),
+                              widget.pagifyData!.controller.filterAndUpdate(
+                                      (e) => widget.textFieldData!.onSearch.call(v, e)
+                              );
+                            }
+                        ),
                       SizedBox(
                         height: widget.listHeight?? 250,
                         child: !widget._dropdownType.withApi?

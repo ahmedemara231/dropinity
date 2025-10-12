@@ -23,6 +23,9 @@ class ButtonData<Model>{
   /// the hint of the main button [Widget]
   final Widget? hint;
 
+  /// the initial Value of the main button [Widget]
+  final Widget? initialValue;
+
   /// the selected item widget of the main button [Widget]
   final Widget Function(Model? selectedElement) selectedItemWidget;
 
@@ -39,6 +42,7 @@ class ButtonData<Model>{
     this.buttonBorderColor,
     this.buttonBorderRadius,
     this.hint,
+    this.initialValue,
     this.color,
     this.padding,
     this.buttonWidth = double.infinity,
