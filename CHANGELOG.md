@@ -1,4 +1,4 @@
-## 0.0.1
+## 0.0.2
 
 #### 🔁 Pagination
 - Integrated with the [`pagify`](https://pub.dev/packages/pagify) package for effortless pagination.

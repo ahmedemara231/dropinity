@@ -6,8 +6,6 @@ import 'package:pagify/helpers/errors.dart';
 import 'package:pagify/helpers/status_stream.dart';
 import 'dart:async';
 import 'package:pagify/pagify.dart';
-import 'package:flutter/services.dart';
-
 part '../helpers/models/main_button.dart';
 part '../helpers/models/pagify_list.dart';
 part '../helpers/models/text_field.dart';
