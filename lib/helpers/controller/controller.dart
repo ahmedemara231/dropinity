@@ -9,6 +9,7 @@ class DropinityController{
 
   /// change list current state to expand state
   void expand(){
+    _currentState!._isInitialized.value = true;
     _currentState!._openDataList.value = true;
   }
 
