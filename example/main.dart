@@ -75,7 +75,7 @@ class _DropinityExampleState extends State<DropinityExample> {
               textFieldData: TextFieldData(
                 onSearch: (pattern, e) => e!.contains(pattern??''),
               ),
-              pagifyData: SearchableDropdownPagifyData(
+              pagifyData: DropinityPagifyData(
                 controller: _pagifyController,
                 asyncCall: (context, page)async => await _fetchData(page),
                 mapper: (response) => PagifyData(

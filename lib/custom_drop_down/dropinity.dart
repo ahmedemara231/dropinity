@@ -17,23 +17,41 @@ part '../widgets/text.dart';
 part 'type_enum.dart';
 
 
+/// main [Dropinity] class
 class Dropinity<FullResponse, Model> extends StatefulWidget {
+  /// height of the list result [double]
   final double? listHeight;
+
+  /// animation of the list result [Curve]
   final Curve curve;
+
+  /// Background Color of the list result [Color]
   final Color listBackgroundColor;
 
+  /// callback when current element changes
   final FutureOr<void> Function(Model val) onChanged;
-  final Widget? dropdownTitle;
 
-  final _DropdownType _dropdownType;
+  /// title of the dropdown
+  final Widget? dropdownTitle;
+  final DropdownType _dropdownType;
+
+  /// button data [ButtonData]
   final ButtonData<Model> buttonData;
+
+  /// text field data [TextFieldData]
   final TextFieldData<Model> textFieldData;
 
-  final SearchableDropdownPagifyData<FullResponse, Model>? pagifyData;
+  /// custom pagify data [DropinityPagifyData] comes from [Pagify] package
+  final DropinityPagifyData<FullResponse, Model>? pagifyData;
 
+  /// values of the dropdown when local
   final List<Model>? values;
+
+  /// values of the dropdown when local which includes itemBuilder
   final ValuesData<Model>? valuesData;
 
+
+  /// constructor for api dropdown
   const Dropinity.withApiRequest({
     super.key,
     this.curve = Curves.linear,
@@ -46,8 +64,9 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
     required this.onChanged
   }) : values = null,
         valuesData = null,
-        _dropdownType = _DropdownType.withRequest;
+        _dropdownType = DropdownType.withRequest;
 
+  /// normal constructor for local dropdown
   const Dropinity({
     super.key,
     this.curve = Curves.linear,
@@ -60,7 +79,7 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
     required this.valuesData,
     required this.onChanged
   }) : pagifyData = null,
-        _dropdownType = _DropdownType.none;
+        _dropdownType = DropdownType.none;
 
   @override
   State<Dropinity<FullResponse, Model>> createState() => _DropinityState<FullResponse, Model>();
@@ -141,7 +160,7 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                   builder: (context, val, child) => Row(
                     children: [
                       if(_selectedValue.isNull)
-                        widget.buttonData.hint?? const _DropifyText('select item', color: Colors.grey)
+                        widget.buttonData.hint?? const _DropifyText('select item', color: Colors.grey, maxLines: 2, overflow: TextOverflow.ellipsis)
                       else
                         widget.buttonData.selectedItemWidget(_selectedValue),
 
