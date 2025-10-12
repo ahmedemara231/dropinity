@@ -134,11 +134,14 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
   }
 
   Widget get _selectButtonText{
-    if(widget.buttonData.initialValue.isNotNull){
-      return widget.buttonData.initialValue!;
+    if(widget.buttonData.initialValue.isNotNull && widget.buttonData.initialValue!.isNotEmpty){
+      return
+        _DropifyText(widget.buttonData.initialValue!, maxLines: 2, overflow: TextOverflow.ellipsis);
+
 
     }else{
-      return widget.buttonData.hint?? const _DropifyText('select item', color: Colors.grey, maxLines: 2, overflow: TextOverflow.ellipsis);
+      return widget.buttonData.hint??
+          const _DropifyText('select item', color: Colors.grey, maxLines: 2, overflow: TextOverflow.ellipsis);
     }
   }
 
