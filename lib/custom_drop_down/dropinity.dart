@@ -6,6 +6,7 @@ import 'package:pagify/helpers/errors.dart';
 import 'package:pagify/helpers/status_stream.dart';
 import 'dart:async';
 import 'package:pagify/pagify.dart';
+
 part '../helpers/models/main_button.dart';
 part '../helpers/models/pagify_list.dart';
 part '../helpers/models/text_field.dart';
@@ -14,6 +15,7 @@ part '../widgets/text_field.dart';
 part '../widgets/text.dart';
 part '../helpers/type_enum.dart';
 part '../helpers/controller/controller.dart';
+part '../helpers/dropinity_data.dart';
 
 
 /// main [Dropinity] class
@@ -24,6 +26,9 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
 
   /// height of the list result [double]
   final double? listHeight;
+
+  /// multi selection property [bool]
+  final bool enableMultiSelection;
 
   /// animation of the list result [Curve]
   final Curve curve;
@@ -62,6 +67,7 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
     this.dropdownTitle,
     this.textFieldData,
     this.listHeight,
+    this.enableMultiSelection = false,
     required this.controller,
     required this.buttonData,
     required this.pagifyData,
@@ -78,6 +84,7 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
     this.dropdownTitle,
     this.textFieldData,
     this.listHeight,
+    this.enableMultiSelection = false,
     required this.controller,
     required this.buttonData,
     required this.values,
@@ -97,6 +104,10 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
     _selectedValue = element;
     widget.onChanged.call(element);
     _changePagifyVisibility();
+  }
+
+  void _selectMultiElements(){
+
   }
 
   late List<Model> _fullValuesData;
@@ -181,10 +192,19 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                   valueListenable: _openDataList,
                   builder: (context, val, child) => Row(
                     children: [
-                      if(_selectedValue.isNull)
-                        _selectButtonText
+                      // single or multi values
+                      if(widget.enableMultiSelection)
+                        ListView.separated(
+                            itemBuilder: (context, i) => SizedBox(),
+                            separatorBuilder: (context, i) => SizedBox(width: 5),
+                            itemCount: 4,
+                        )
+
                       else
-                        widget.buttonData.selectedItemWidget(_selectedValue),
+                        if(_selectedValue.isNull)
+                          _selectButtonText
+                        else
+                          widget.buttonData.selectedItemWidget(_selectedValue),
 
                       const Spacer(),
 
@@ -250,7 +270,8 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                             children: List.generate(
                               val.length,
                                   (i) => InkWell(
-                                  onTap: () => _selectNewElement(val[i]),
+                                      onTap: () => widget.enableMultiSelection?
+                                      _selectMultiElements() : _selectNewElement(val[i]),
                                   child: widget.valuesData!.itemBuilder.call(context, i, val[i])
                               ),
                             ),
@@ -263,7 +284,8 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                           mapper: widget.pagifyData!.mapper,
                           errorMapper: widget.pagifyData!.errorMapper,
                           itemBuilder: (context, data, index, element) => InkWell(
-                              onTap: () => _selectNewElement(element),
+                              onTap: () => widget.enableMultiSelection?
+                              _selectMultiElements() : _selectNewElement(element),
                               child: widget.pagifyData!.itemBuilder(context, data, index, element)
                           ),
                           errorBuilder: widget.pagifyData!.errorBuilder,
