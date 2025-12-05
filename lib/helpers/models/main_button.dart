@@ -24,7 +24,7 @@ class ButtonData<Model>{
   final Widget? hint;
 
   /// the initial Value of the main button [String]
-  final String? initialValue;
+  final Model? initialValue;
 
   /// the selected item widget of the main button [Widget]
   final Widget Function(Model? selectedElement) selectedItemWidget;
