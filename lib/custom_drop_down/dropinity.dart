@@ -6,6 +6,7 @@ import 'package:pagify/helpers/errors.dart';
 import 'package:pagify/helpers/status_stream.dart';
 import 'dart:async';
 import 'package:pagify/pagify.dart';
+
 part '../helpers/models/main_button.dart';
 part '../helpers/models/pagify_list.dart';
 part '../helpers/models/text_field.dart';
@@ -15,7 +16,6 @@ part '../widgets/text.dart';
 part '../widgets/validator_helper.dart';
 part '../helpers/type_enum.dart';
 part '../helpers/controller/controller.dart';
-
 
 
 /// main [Dropinity] class
@@ -144,8 +144,6 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
 
   void _changePagifyVisibility() => _openDataList.value = !_openDataList.value;
 
-  final ValueNotifier<bool> _isInitialized = ValueNotifier(false);
-
   void _initController(){
     widget.controller._init(this);
   }
@@ -189,10 +187,7 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                     widget.dropdownTitle!,
 
                   InkWell(
-                    onTap: (){
-                      _isInitialized.value = true;
-                      _changePagifyVisibility();
-                    },
+                    onTap: () => _changePagifyVisibility(),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: widget.buttonData.buttonBorderRadius?? BorderRadius.circular(12),
@@ -225,97 +220,94 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                 ],
               ),
               ValueListenableBuilder(
-                valueListenable: _isInitialized,
-                builder: (context, val, child) => val? ValueListenableBuilder(
-                    valueListenable: _openDataList,
-                    builder: (context, isOpen, child) => Visibility(
-                      visible: isOpen,
-                      maintainState: true,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 250),
-                        curve: widget.curve,
-                        color: widget.listBackgroundColor,
-                        child: Column(
-                          spacing: 7,
-                          children: [
-                            if(widget.textFieldData.isNotNull)
-                              _DefaultTextField(
-                                  title: widget.textFieldData!.title,
-                                  prefixIcon: widget.textFieldData!.prefixIcon,
-                                  suffixIcon: widget.textFieldData!.suffixIcon,
-                                  borderRadius: widget.textFieldData!.borderRadius,
-                                  borderColor: widget.textFieldData!.borderColor,
-                                  contentPadding: widget.textFieldData!.contentPadding,
-                                  controller: widget.textFieldData!.controller,
-                                  fillColor: widget.textFieldData!.fillColor,
-                                  maxLength: widget.textFieldData!.maxLength,
-                                  style: widget.textFieldData!.style,
-                                  onChanged: (v) {
-                                    if(!widget._dropdownType.withApi){
-                                      _executeSearchLogicToLocalData(v ?? '');
-                                      return;
-                                    }
-
-                                    if(v.isNull || v!.isEmpty){
-                                      widget.pagifyData!.controller.assignToFullData();
-                                      return;
-                                    }
-
-                                    widget.pagifyData!.controller.filterAndUpdate(
-                                            (e) => widget.textFieldData!.onSearch.call(v, e)
-                                    );
+                  valueListenable: _openDataList,
+                  builder: (context, isOpen, child) => Visibility(
+                    visible: isOpen,
+                    maintainState: true,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      curve: widget.curve,
+                      color: widget.listBackgroundColor,
+                      child: Column(
+                        spacing: 7,
+                        children: [
+                          if(widget.textFieldData.isNotNull)
+                            _DefaultTextField(
+                                title: widget.textFieldData!.title,
+                                prefixIcon: widget.textFieldData!.prefixIcon,
+                                suffixIcon: widget.textFieldData!.suffixIcon,
+                                borderRadius: widget.textFieldData!.borderRadius,
+                                borderColor: widget.textFieldData!.borderColor,
+                                contentPadding: widget.textFieldData!.contentPadding,
+                                controller: widget.textFieldData!.controller,
+                                fillColor: widget.textFieldData!.fillColor,
+                                maxLength: widget.textFieldData!.maxLength,
+                                style: widget.textFieldData!.style,
+                                onChanged: (v) {
+                                  if(!widget._dropdownType.withApi){
+                                    _executeSearchLogicToLocalData(v ?? '');
+                                    return;
                                   }
-                              ),
-                            SizedBox(
-                              height: widget.listHeight?? 250,
-                              child: !widget._dropdownType.withApi?
-                              ValueListenableBuilder(
-                                valueListenable: _localValues,
-                                builder: (context, val, child) => ListView(
-                                  children: List.generate(
-                                    val.length,
-                                        (i) => InkWell(
-                                        onTap: () {
-                                          _selectNewElement(val[i]);
-                                          state.didChange(val[i]);
-                                        },
-                                        child: widget.valuesData!.itemBuilder.call(context, i, val[i])
-                                    ),
-                                  ),
-                                ).paddingAll(10),
-                              ) :
-                              Pagify<FullResponse, Model>.listView(
-                                shrinkWrap: true,
-                                controller: widget.pagifyData!.controller,
-                                asyncCall: widget.pagifyData!.asyncCall,
-                                mapper: widget.pagifyData!.mapper,
-                                errorMapper: widget.pagifyData!.errorMapper,
-                                itemBuilder: (context, data, index, element) => InkWell(
-                                    onTap: () {
-                                      _selectNewElement(element);
-                                      state.didChange(element);
-                                    },
-                                    child: widget.pagifyData!.itemBuilder(context, data, index, element)
-                                ),
-                                errorBuilder: widget.pagifyData!.errorBuilder,
-                                loadingBuilder: widget.pagifyData!.loadingBuilder,
-                                padding: widget.pagifyData!.padding,
-                                itemExtent: widget.pagifyData!.itemExtent,
-                                onUpdateStatus: widget.pagifyData!.onUpdateStatus,
-                                onLoading: widget.pagifyData!.onLoading,
-                                onSuccess: widget.pagifyData!.onSuccess,
-                                onError: widget.pagifyData!.onError,
-                                emptyListView: widget.pagifyData!.emptyListView,
-                                showNoDataAlert: true,
-                                ignoreErrorBuilderWhenErrorOccursAndListIsNotEmpty: true,
-                                noConnectionText: widget.pagifyData!.noConnectionText,
-                              ).paddingAll(10),
+
+                                  if(v.isNull || v!.isEmpty){
+                                    widget.pagifyData!.controller.assignToFullData();
+                                    return;
+                                  }
+
+                                  widget.pagifyData!.controller.filterAndUpdate(
+                                          (e) => widget.textFieldData!.onSearch.call(v, e)
+                                  );
+                                }
                             ),
-                          ],
-                        ),
+                          SizedBox(
+                            height: widget.listHeight?? 250,
+                            child: !widget._dropdownType.withApi?
+                            ValueListenableBuilder(
+                              valueListenable: _localValues,
+                              builder: (context, val, child) => ListView(
+                                children: List.generate(
+                                  val.length,
+                                      (i) => InkWell(
+                                      onTap: () {
+                                        _selectNewElement(val[i]);
+                                        state.didChange(val[i]);
+                                      },
+                                      child: widget.valuesData!.itemBuilder.call(context, i, val[i])
+                                  ),
+                                ),
+                              ).paddingAll(10),
+                            ) :
+                            Pagify<FullResponse, Model>.listView(
+                              shrinkWrap: true,
+                              controller: widget.pagifyData!.controller,
+                              asyncCall: widget.pagifyData!.asyncCall,
+                              mapper: widget.pagifyData!.mapper,
+                              errorMapper: widget.pagifyData!.errorMapper,
+                              itemBuilder: (context, data, index, element) => InkWell(
+                                  onTap: () {
+                                    _selectNewElement(element);
+                                    state.didChange(element);
+                                  },
+                                  child: widget.pagifyData!.itemBuilder(context, data, index, element)
+                              ),
+                              errorBuilder: widget.pagifyData!.errorBuilder,
+                              loadingBuilder: widget.pagifyData!.loadingBuilder,
+                              padding: widget.pagifyData!.padding,
+                              itemExtent: widget.pagifyData!.itemExtent,
+                              onUpdateStatus: widget.pagifyData!.onUpdateStatus,
+                              onLoading: widget.pagifyData!.onLoading,
+                              onSuccess: widget.pagifyData!.onSuccess,
+                              onError: widget.pagifyData!.onError,
+                              emptyListView: widget.pagifyData!.emptyListView,
+                              showNoDataAlert: true,
+                              ignoreErrorBuilderWhenErrorOccursAndListIsNotEmpty: true,
+                              noConnectionText: widget.pagifyData!.noConnectionText,
+                            ).paddingAll(10),
+                          ),
+                        ],
                       ),
-                    )
-                ) : const SizedBox.shrink(),
+                    ),
+                  )
               )
             ],
           ),
