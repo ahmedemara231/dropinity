@@ -21,11 +21,21 @@ part '../helpers/controller/controller.dart';
 /// main [Dropinity] class
 class Dropinity<FullResponse, Model> extends StatefulWidget {
 
+  /// keep state on memory [bool]
+  final bool maintainState;
+
   /// Dropinity custom validator
   final String? Function(Model?)? validator;
 
   /// error builder [Widget]
   final Widget Function(String errorMsg)? errorWidget;
+
+
+  /// onCollapse callback [Function]
+  final FutureOr<void> Function()? onCollapse;
+
+  /// onExpand callback [Function]
+  final FutureOr<void> Function()? onExpand;
 
 
   /// validation mode of validator [AutovalidateMode]
@@ -69,6 +79,7 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
   /// constructor for api dropdown
   const Dropinity.withApiRequest({
     super.key,
+    this.maintainState = false,
     this.validator,
     this.autoValidateMode,
     this.errorWidget,
@@ -80,7 +91,9 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
     required this.controller,
     required this.buttonData,
     required this.pagifyData,
-    required this.onChanged
+    required this.onChanged,
+    this.onCollapse,
+    this.onExpand,
   }) : values = null,
         valuesData = null,
         _dropdownType = DropdownType.withRequest;
@@ -89,6 +102,8 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
   const Dropinity({
     super.key,
     this.curve = Curves.linear,
+    this.onCollapse,
+    this.onExpand,
     this.autoValidateMode,
     this.errorWidget,
     this.listBackgroundColor = Colors.white,
@@ -100,7 +115,8 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
     required this.buttonData,
     required this.values,
     required this.valuesData,
-    required this.onChanged
+    required this.onChanged,
+    this.maintainState = false,
   }) : pagifyData = null,
         _dropdownType = DropdownType.none;
 
@@ -140,7 +156,17 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
     }
   }
 
-  final ValueNotifier<bool> _openDataList = ValueNotifier(false);
+  late final ValueNotifier<bool> _openDataList = ValueNotifier(false)
+    ..addListener(_openingListener);
+
+  void _openingListener(){
+    if(_openDataList.value){
+      widget.onExpand?.call();
+
+    }else{
+      widget.onCollapse?.call();
+    }
+  }
 
   void _changePagifyVisibility() => _openDataList.value = !_openDataList.value;
 
@@ -223,7 +249,8 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                   valueListenable: _openDataList,
                   builder: (context, isOpen, child) => Visibility(
                     visible: isOpen,
-                    maintainState: true,
+                    maintainState: widget.maintainState,
+                    replacement: const SizedBox.shrink(),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 250),
                       curve: widget.curve,
@@ -250,11 +277,11 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                                   }
 
                                   if(v.isNull || v!.isEmpty){
-                                    widget.pagifyData!.controller.assignToFullData();
+                                    widget.pagifyData!.controller?.assignToFullData();
                                     return;
                                   }
 
-                                  widget.pagifyData!.controller.filterAndUpdate(
+                                  widget.pagifyData!.controller?.filterAndUpdate(
                                           (e) => widget.textFieldData!.onSearch.call(v, e)
                                   );
                                 }
@@ -279,7 +306,7 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                             ) :
                             Pagify<FullResponse, Model>.listView(
                               shrinkWrap: true,
-                              controller: widget.pagifyData!.controller,
+                              controller: widget.pagifyData?.controller ?? PagifyController(),
                               asyncCall: widget.pagifyData!.asyncCall,
                               mapper: widget.pagifyData!.mapper,
                               errorMapper: widget.pagifyData!.errorMapper,

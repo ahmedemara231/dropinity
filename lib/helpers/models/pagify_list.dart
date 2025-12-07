@@ -4,7 +4,7 @@ part of '../../custom_drop_down/dropinity.dart';
 /// main class to [Pagify] data
 class DropinityPagifyData<FullResponse, Model>{
   /// pagify controller comes from [Pagify] package
-  final PagifyController<Model> controller;
+  final PagifyController<Model>? controller;
 
   /// pagify main api request comes from [Pagify] package
   Future<FullResponse> Function(BuildContext context, int page) asyncCall;
@@ -60,7 +60,7 @@ class DropinityPagifyData<FullResponse, Model>{
     required this.mapper,
     required this.errorMapper,
     required this.itemBuilder,
-    required this.controller,
+    this.controller,
     this.padding = const EdgeInsets.all(0),
     this.itemExtent,
     this.onUpdateStatus,
