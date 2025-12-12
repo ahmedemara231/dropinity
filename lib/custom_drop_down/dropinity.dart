@@ -44,6 +44,9 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
 /// controller of the dropdown [DropinityController]
   final DropinityController controller;
 
+  /// no more data flag [bool]
+  final bool showNoDataAlert;
+
   /// height of the list result [double]
   final double? listHeight;
 
@@ -80,6 +83,7 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
   const Dropinity.withApiRequest({
     super.key,
     this.maintainState = false,
+    this.showNoDataAlert = false,
     this.validator,
     this.autoValidateMode,
     this.errorWidget,
@@ -116,6 +120,7 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
     required this.values,
     required this.valuesData,
     required this.onChanged,
+    this.showNoDataAlert = false,
     this.maintainState = false,
   }) : pagifyData = null,
         _dropdownType = DropdownType.none;
@@ -326,7 +331,7 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                               onSuccess: widget.pagifyData!.onSuccess,
                               onError: widget.pagifyData!.onError,
                               emptyListView: widget.pagifyData!.emptyListView,
-                              showNoDataAlert: true,
+                              showNoDataAlert: widget.showNoDataAlert,
                               ignoreErrorBuilderWhenErrorOccursAndListIsNotEmpty: true,
                               noConnectionText: widget.pagifyData!.noConnectionText,
                             ).paddingAll(10),
