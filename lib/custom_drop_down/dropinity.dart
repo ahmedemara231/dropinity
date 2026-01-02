@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dropinity/helpers/extensions/object.dart';
 import 'package:dropinity/helpers/extensions/padding_extension.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +28,7 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
 
   /// Dropinity custom validator
   final String? Function(Model?)? validator;
+
 
   /// error builder [Widget]
   final Widget Function(String errorMsg)? errorWidget;
@@ -59,6 +62,7 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
   /// callback when current element changes
   final FutureOr<void> Function(Model val) onChanged;
 
+
   /// title of the dropdown
   final Widget? dropdownTitle;
   final DropdownType _dropdownType;
@@ -78,10 +82,27 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
   /// values of the dropdown when local which includes itemBuilder
   final ValuesData<Model>? valuesData;
 
+  /// the single item which is selected in multi selection
+  final Widget Function(BuildContext context, Model element)? multiSelectionItemBuilder;
+
+  /// callback when list changes
+  final FutureOr<void> Function(List<Model> values)? onListChanged;
+
+  /// multi selection option [bool]
+  final bool enableMultiSelection;
+
+  /// initial values for multi selection
+  final List<Model> initialValues;
+
 
   /// constructor for api dropdown
   const Dropinity.withApiRequest({
     super.key,
+    this.enableMultiSelection = false,
+    this.multiSelectionItemBuilder,
+    this.onListChanged,
+    this.initialValues = const [],
+
     this.maintainState = false,
     this.showNoDataAlert = false,
     this.validator,
@@ -105,6 +126,11 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
   /// normal constructor for local dropdown
   const Dropinity({
     super.key,
+    this.enableMultiSelection = false,
+    this.multiSelectionItemBuilder,
+    this.onListChanged,
+    this.initialValues = const [],
+
     this.curve = Curves.linear,
     this.onCollapse,
     this.onExpand,
@@ -131,13 +157,17 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
 
 class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse, Model>> {
   Model? _selectedValue;
-
+  late final ValueNotifier<List<Model>> _selectedValuesList = ValueNotifier(widget.initialValues);
   void _selectNewElement(Model element){
     _selectedValue = element;
     widget.onChanged.call(element);
     _changePagifyVisibility();
   }
-
+  void _addNewElement(Model element){
+    final List<Model> newList = List.from(_selectedValuesList.value)..add(element);
+    _selectedValuesList.value = newList;
+    widget.onListChanged?.call(_selectedValuesList.value);
+  }
 
   late List<Model> _fullValuesData;
 
@@ -232,6 +262,7 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                         valueListenable: _openDataList,
                         builder: (context, val, child) => Row(
                           children: [
+                            widget.buttonData.prefixIcon??const SizedBox.shrink(),
                             if(_selectedValue.isNull)
                               _selectButtonText
                             else
@@ -301,7 +332,13 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                                   val.length,
                                       (i) => InkWell(
                                       onTap: () {
-                                        _selectNewElement(val[i]);
+                                        if(widget.enableMultiSelection){
+                                          _addNewElement(val[i]);
+
+                                        }else{
+                                          _selectNewElement(val[i]);
+                                        }
+
                                         state.didChange(val[i]);
                                       },
                                       child: widget.valuesData!.itemBuilder.call(context, i, val[i])
@@ -317,7 +354,13 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                               errorMapper: widget.pagifyData!.errorMapper,
                               itemBuilder: (context, data, index, element) => InkWell(
                                   onTap: () {
-                                    _selectNewElement(element);
+                                    if(widget.enableMultiSelection){
+                                      _addNewElement(element);
+
+                                    }else{
+                                      _selectNewElement(element);
+                                    }
+
                                     state.didChange(element);
                                   },
                                   child: widget.pagifyData!.itemBuilder(context, data, index, element)
@@ -340,7 +383,27 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                       ),
                     ),
                   )
-              )
+              ),
+              if(widget.enableMultiSelection)
+                ValueListenableBuilder(
+                  valueListenable: _selectedValuesList,
+                  builder: (context, val, child) {
+                    final List<Model> viewedList = _selectedValuesList.value.isEmpty?
+                    widget.initialValues : _selectedValuesList.value;
+
+                    return Wrap(
+                      alignment: WrapAlignment.start,
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: List.generate(
+                          viewedList.length,
+                              (i) => widget.multiSelectionItemBuilder!.call(
+                              context, viewedList[i]
+                          )
+                      ),
+                    );
+                  }
+                )
             ],
           ),
           if(state.hasError)

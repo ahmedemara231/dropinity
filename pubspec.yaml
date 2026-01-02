@@ -16,7 +16,8 @@ environment:
 
 dependencies:
   pagify:
-    git: https://github.com/ahmedemara231/pagination_helper
+    path: /Users/aaita/Desktop/apps/pagination_helper
+#    git: https://github.com/ahmedemara231/pagination_helper
 
 #  pagify: ^0.2.8
   flutter:

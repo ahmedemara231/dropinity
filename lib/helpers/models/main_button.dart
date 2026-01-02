@@ -35,12 +35,16 @@ class ButtonData<Model>{
   /// the collapsed list icon of the main button [Widget]
   final Widget? collapsedListIcon;
 
+  /// prefix icon [Widget]
+  final Widget? prefixIcon;
+
 
   /// main constructor for [ButtonData]
   ButtonData({
     required this.selectedItemWidget,
     this.buttonBorderColor,
     this.buttonBorderRadius,
+    this.prefixIcon,
     this.hint,
     this.initialValue,
     this.color,
