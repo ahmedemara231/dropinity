@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dropinity/helpers/extensions/object.dart';
 import 'package:dropinity/helpers/extensions/padding_extension.dart';
 import 'package:flutter/material.dart';
@@ -157,7 +155,8 @@ class Dropinity<FullResponse, Model> extends StatefulWidget {
 
 class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse, Model>> {
   Model? _selectedValue;
-  late final ValueNotifier<List<Model>> _selectedValuesList = ValueNotifier(widget.initialValues);
+  void _multiSelectionListener() => widget.onListChanged?.call(_selectedValuesList.value);
+  late final ValueNotifier<List<Model>> _selectedValuesList = ValueNotifier(widget.initialValues)..addListener(_multiSelectionListener);
   void _selectNewElement(Model element){
     _selectedValue = element;
     widget.onChanged.call(element);
@@ -166,7 +165,6 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
   void _addNewElement(Model element){
     final List<Model> newList = List.from(_selectedValuesList.value)..add(element);
     _selectedValuesList.value = newList;
-    widget.onListChanged?.call(_selectedValuesList.value);
   }
 
   late List<Model> _fullValuesData;
@@ -388,18 +386,36 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                 ValueListenableBuilder(
                   valueListenable: _selectedValuesList,
                   builder: (context, val, child) {
-                    final List<Model> viewedList = _selectedValuesList.value.isEmpty?
-                    widget.initialValues : _selectedValuesList.value;
-
                     return Wrap(
                       alignment: WrapAlignment.start,
                       spacing: 10,
                       runSpacing: 10,
                       children: List.generate(
-                          viewedList.length,
-                              (i) => widget.multiSelectionItemBuilder!.call(
-                              context, viewedList[i]
-                          )
+                          val.length,
+                              (i) => Stack(
+                                alignment: Alignment.topLeft,
+                                children: [
+                                  widget.multiSelectionItemBuilder!.call(
+                                      context, val[i]
+                                  ).paddingTop(22).paddingEnd(22),
+
+                                  IconButton(
+                                      onPressed: () {
+                                        final List<Model> oldList = List.from(_selectedValuesList.value)..removeAt(i);
+                                        _selectedValuesList.value = oldList;
+                                      },
+                                      icon: Container(
+                                        width: 18,
+                                        height: 18,
+                                        decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.red
+                                        ),
+                                        child: Icon(Icons.close, size: 12),
+                                      )
+                                  ),
+                                ],
+                              )
                       ),
                     );
                   }
