@@ -53,6 +53,23 @@ class DropinityPagifyData<FullResponse, Model>{
   /// custom text when there is no internet connection [String] comes from [Pagify] package
   String? noConnectionText;
 
+  /// Optional cache key for offline support.
+  /// Must be provided together with [cacheToJson], [cacheFromJson], [onSaveCache], and [onReadCache].
+  String? cacheKey;
+
+  /// Converts a [Model] item to a JSON map for caching.
+  Map<String, dynamic> Function(Model item)? cacheToJson;
+
+  /// Converts a cached JSON map back to a [Model] item.
+  Model Function(Map<String, dynamic> json)? cacheFromJson;
+
+  /// Called to persist the fetched items list when a request succeeds.
+  void Function(String key, List<Map<String, dynamic>> items)? onSaveCache;
+
+  /// Called to restore items from cache when a request fails.
+  /// Return `null` or an empty list if no cache exists.
+  List<Map<String, dynamic>>? Function(String key)? onReadCache;
+
 
   /// constructor for [DropinityPagifyData]
   DropinityPagifyData({
@@ -71,5 +88,10 @@ class DropinityPagifyData<FullResponse, Model>{
     this.showNoDataAlert = false,
     this.loadingBuilder,
     this.errorBuilder,
+    this.cacheKey,
+    this.cacheToJson,
+    this.cacheFromJson,
+    this.onSaveCache,
+    this.onReadCache,
   });
 }

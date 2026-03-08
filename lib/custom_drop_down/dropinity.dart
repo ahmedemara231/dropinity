@@ -176,6 +176,10 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
       _fullValuesData = List.from(widget.values!);
       _localValues = ValueNotifier(List.from(widget.values!));
     }
+
+    if((widget.buttonData.initialValue as Object?).isNotNull){
+      widget.onChanged.call(widget.buttonData.initialValue!);
+    }
   }
 
   void _executeSearchLogicToLocalData(String pattern) {
@@ -375,6 +379,11 @@ class _DropinityState<FullResponse, Model> extends State<Dropinity<FullResponse,
                               showNoDataAlert: widget.showNoDataAlert,
                               ignoreErrorBuilderWhenErrorOccursAndListIsNotEmpty: true,
                               noConnectionText: widget.pagifyData!.noConnectionText,
+                              cacheKey: widget.pagifyData!.cacheKey,
+                              cacheToJson: widget.pagifyData!.cacheToJson,
+                              cacheFromJson: widget.pagifyData!.cacheFromJson,
+                              onSaveCache: widget.pagifyData!.onSaveCache,
+                              onReadCache: widget.pagifyData!.onReadCache,
                             ).paddingAll(10),
                           ),
                         ],
