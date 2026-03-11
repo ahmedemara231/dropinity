@@ -55,6 +55,7 @@ class DropinityPagifyData<FullResponse, Model>{
 
   /// Optional cache key for offline support.
   /// Must be provided together with [cacheToJson], [cacheFromJson], [onSaveCache], and [onReadCache].
+  // String Function(int)? cacheKey;
   String? cacheKey;
 
   /// Converts a [Model] item to a JSON map for caching.

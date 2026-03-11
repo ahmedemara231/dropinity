@@ -1,6 +1,6 @@
 name: dropinity
 description: "a powerful and customizable paginated dropdown widget for Flutter"
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/ahmedemara231/dropinity
 
 topics:
@@ -15,8 +15,8 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  pagify:
-    path: /Users/aaita/Desktop/apps/pagination_helper
+  pagify: 0.3.1
+#    path: /Users/aaita/Desktop/apps/pagination_helper
 #    git: https://github.com/ahmedemara231/pagination_helper
 
 #  pagify: ^0.2.8

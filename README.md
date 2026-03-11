@@ -38,6 +38,9 @@ A powerful and customizable Flutter dropdown widget with built-in search functio
 - ✅ Built-in form validation support
 - 🎮 Programmatic control via `DropinityController`
 - 🔄 State persistence when toggling dropdown
+- 📦 Offline caching support for API responses
+- ☑️ Multi-selection mode with pre-populated initial values
+- 🔔 Expand / collapse lifecycle callbacks
 - 📱 Platform-agnostic (iOS, Android, Web, Desktop)
 
 ---
@@ -58,7 +61,7 @@ Add `dropinity` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  dropinity: ^0.0.2
+  dropinity: ^0.0.3
 ```
 
 Then run:
@@ -559,6 +562,83 @@ Dropinity<void, Product>(
 )
 ```
 
+### 6. Multi-Selection
+
+Allow users to pick multiple items at once:
+
+```dart
+Dropinity<void, String>(
+  controller: DropinityController(),
+  enableMultiSelection: true,
+  initialValues: const ['Apple', 'Mango'],
+  buttonData: ButtonData(
+    hint: Text('Select fruits'),
+    selectedItemWidget: (fruit) => Text(fruit ?? ''),
+  ),
+  textFieldData: TextFieldData(
+    onSearch: (pattern, fruit) =>
+        fruit?.toLowerCase().contains(pattern?.toLowerCase() ?? '') ?? false,
+  ),
+  values: ['Apple', 'Banana', 'Orange', 'Mango', 'Grape'],
+  valuesData: ValuesData(
+    itemBuilder: (context, index, fruit) => ListTile(title: Text(fruit)),
+  ),
+  onChanged: (fruit) => print('Last tapped: $fruit'),
+  onListChanged: (selected) => print('All selected: $selected'),
+)
+```
+
+### 7. Offline Caching
+
+Persist paginated API responses so the dropdown works without a network connection:
+
+```dart
+Dropinity<ApiResponse, User>.withApiRequest(
+  controller: _dropinityController,
+  buttonData: ButtonData(
+    hint: Text('Select user'),
+    selectedItemWidget: (user) => Text(user?.name ?? ''),
+  ),
+  pagifyData: DropinityPagifyData(
+    asyncCall: (context, page) => _fetchUsers(page),
+    mapper: (response) => PagifyData(
+      data: response.users,
+      paginationData: PaginationData(totalPages: response.totalPages, perPage: 20),
+    ),
+    errorMapper: PagifyErrorMapper(),
+    itemBuilder: (context, data, index, user) => ListTile(title: Text(user.name)),
+
+    // Cache configuration
+    cacheKey: 'users_dropdown',
+    cacheToJson: (user) => {'id': user.id, 'name': user.name, 'email': user.email},
+    cacheFromJson: (json) => User(id: json['id'], name: json['name'], email: json['email']),
+    onSaveCache: (key, items) {
+      // Persist using shared_preferences, Hive, etc.
+      prefs.setString(key, jsonEncode(items));
+    },
+    onReadCache: (key) {
+      final raw = prefs.getString(key);
+      if (raw == null) return null;
+      return (jsonDecode(raw) as List).cast<Map<String, dynamic>>();
+    },
+  ),
+  onChanged: (user) => print('Selected: ${user?.name}'),
+)
+```
+
+### 8. Expand / Collapse Callbacks
+
+React to the dropdown opening and closing:
+
+```dart
+Dropinity<void, String>(
+  controller: DropinityController(),
+  onExpand: () => print('Dropdown opened'),
+  onCollapse: () => print('Dropdown closed'),
+  // ... rest of config
+)
+```
+
 ---
 
 ## API Reference
@@ -583,6 +663,12 @@ Dropinity<void, Model>({
   double? listHeight,
   Curve curve = Curves.linear,
   Color listBackgroundColor = Colors.white,
+  bool maintainState = false,
+  bool enableMultiSelection = false,
+  List<Model> initialValues = const [],
+  void Function(List<Model>)? onListChanged,
+  void Function()? onExpand,
+  void Function()? onCollapse,
 })
 ```
 
@@ -601,6 +687,12 @@ Dropinity<FullResponse, Model>.withApiRequest({
   double? listHeight,
   Curve curve = Curves.linear,
   Color listBackgroundColor = Colors.white,
+  bool maintainState = false,
+  bool enableMultiSelection = false,
+  List<Model> initialValues = const [],
+  void Function(List<Model>)? onListChanged,
+  void Function()? onExpand,
+  void Function()? onCollapse,
 })
 ```
 
@@ -612,13 +704,14 @@ Configuration for the dropdown button:
 |-----------|------|---------|-------------|
 | `selectedItemWidget` | `Widget Function(Model?)` | **required** | Builder for selected item display |
 | `hint` | `Widget?` | `null` | Placeholder widget when nothing is selected |
-| `initialValue` | `Model?` | `null` | Pre-selected value |
+| `initialValue` | `Model?` | `null` | Pre-selected value (triggers `onChanged` on init) |
 | `buttonWidth` | `double` | `double.infinity` | Button width |
 | `buttonHeight` | `double` | `50` | Button height |
 | `color` | `Color?` | `Colors.white` | Background color |
 | `buttonBorderColor` | `Color?` | `Colors.grey[300]` | Border color |
 | `buttonBorderRadius` | `BorderRadius?` | `BorderRadius.circular(12)` | Border radius |
 | `padding` | `EdgeInsetsGeometry?` | `EdgeInsets.all(12)` | Internal padding |
+| `prefixIcon` | `Widget?` | `null` | Leading icon inside the button |
 | `expandedListIcon` | `Widget?` | `Icon(Icons.arrow_drop_up)` | Icon when dropdown is open |
 | `collapsedListIcon` | `Widget?` | `Icon(Icons.arrow_drop_down)` | Icon when dropdown is closed |
 
@@ -654,7 +747,7 @@ Configuration for API-based pagination:
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `controller` | `PagifyController<Model>` | Pagination controller from Pagify |
+| `controller` | `PagifyController<Model>?` | Pagination controller from Pagify |
 | `asyncCall` | `Future<FullResponse> Function(BuildContext, int)` | API call function |
 | `mapper` | `PagifyData<Model> Function(FullResponse)` | Response to data mapper |
 | `errorMapper` | `PagifyErrorMapper` | Error handling mapper |
@@ -662,13 +755,20 @@ Configuration for API-based pagination:
 | `padding` | `EdgeInsetsGeometry` | List padding |
 | `itemExtent` | `double?` | Fixed item height |
 | `loadingBuilder` | `Widget?` | Custom loading indicator |
-| `errorBuilder` | `Widget Function(String)?` | Custom error widget |
+| `errorBuilder` | `Widget Function(PagifyException)?` | Custom error widget (receives typed exception) |
 | `emptyListView` | `Widget?` | Widget when list is empty |
 | `noConnectionText` | `String?` | No connection message |
-| `onUpdateStatus` | `void Function(PagifyStatus)?` | Status change callback |
-| `onLoading` | `void Function()?` | Loading state callback |
-| `onSuccess` | `void Function(BuildContext, PagifyData)?` | Success callback |
-| `onError` | `void Function(BuildContext, int?, String)?` | Error callback |
+| `showNoDataAlert` | `bool` | Show alert when the API returns an empty list |
+| `ignoreErrorBuilderWhenErrorOccursAndListIsNotEmpty` | `bool` | Suppress error widget if list already has data |
+| `cacheKey` | `String?` | Key used to store/read cached data |
+| `cacheToJson` | `Map<String, dynamic> Function(Model)?` | Converts a model item to JSON for caching |
+| `cacheFromJson` | `Model Function(Map<String, dynamic>)?` | Restores a model item from cached JSON |
+| `onSaveCache` | `void Function(String key, List<Map<String, dynamic>>)?` | Called to persist the cache |
+| `onReadCache` | `List<Map<String, dynamic>>? Function(String key)?` | Called to restore the cache |
+| `onUpdateStatus` | `FutureOr<void> Function(PagifyAsyncCallStatus)?` | Status change callback |
+| `onLoading` | `FutureOr<void> Function()?` | Loading state callback |
+| `onSuccess` | `FutureOr<void> Function(BuildContext, List<dynamic>)?` | Success callback |
+| `onError` | `FutureOr<void> Function(BuildContext, int, PagifyException)?` | Error callback |
 
 ### DropinityController
 
@@ -750,13 +850,13 @@ DropinityPagifyData<ApiResponse, User>(
       );
     },
   ),
-  errorBuilder: (error) => Center(
+  errorBuilder: (exception) => Center(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(Icons.error_outline, size: 48, color: Colors.red),
         SizedBox(height: 16),
-        Text(error, style: TextStyle(color: Colors.red)),
+        Text(exception.message, style: TextStyle(color: Colors.red)),
         SizedBox(height: 16),
         ElevatedButton(
           onPressed: () => _pagifyController.refresh(),
@@ -765,10 +865,12 @@ DropinityPagifyData<ApiResponse, User>(
       ],
     ),
   ),
-  onError: (context, statusCode, error) {
+  // Keep showing existing list items even when an error occurs on next page load
+  ignoreErrorBuilderWhenErrorOccursAndListIsNotEmpty: true,
+  onError: (context, statusCode, exception) {
     // Log errors, show snackbar, etc.
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: $error')),
+      SnackBar(content: Text('Error: ${exception.message}')),
     );
   },
 )
@@ -827,7 +929,18 @@ listHeight: MediaQuery.of(context).size.height * 0.3
 listHeight: 250
 ```
 
-### 6. Handle Empty States
+### 6. Preserve List State
+
+Enable `maintainState` to keep the scroll position and loaded pages intact when the user toggles the dropdown:
+
+```dart
+Dropinity<ApiResponse, User>.withApiRequest(
+  maintainState: true,
+  // ...
+)
+```
+
+### 7. Handle Empty States
 
 ```dart
 valuesData: ValuesData(
