@@ -1,4 +1,4 @@
-## 0.0.3
+## 0.0.4
 
 #### 💾 Offline Caching
 - Added offline caching support via `cacheKey`, `cacheToJson`, `cacheFromJson`, `onSaveCache`, and `onReadCache` properties in `DropinityPagifyData`.

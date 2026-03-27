@@ -4,6 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Flutter](https://img.shields.io/badge/Platform-Flutter-blue.svg)](https://flutter.dev)
 
+[![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/emara24)
+
 A powerful and customizable Flutter dropdown widget with built-in search functionality and seamless pagination support for both local and remote data sources.
 
 ---
@@ -1088,3 +1090,5 @@ If you find this package useful, please consider:
 ---
 
 **Made with ❤️ for the Flutter community**
+
+[![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/emara24)
